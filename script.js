@@ -28,3 +28,68 @@ let nearbyMarkersCluster = L.markerClusterGroup();
 
 map.addLayer(nearbyMarkersCluster);
 
+axios.get('assets/regions.0.01.json')
+    .then(function(response) {
+        response.data.features.forEach(region => {
+            L.geoJSON(region, {fillOpacity: 0.0}).addTo(map);});
+})
+.catch(function(error) {
+    console.log(error);
+});
+
+document.getElementById('zoom-in').onclick = function() {
+map.setZoom(map.getZoom() + 1);
+};
+
+document.getElementById('zoom-out').onclick = function() {
+map.setZoom(map.getZoom() - 1);
+};
+
+var foodIconOptions = {
+iconUrl: './assets/utensils-solid.png',
+iconSize: [20, 20]
+};
+
+var foodIcon = L.icon(foodIconOptions);
+
+var accommodationIconOptions = {
+iconUrl: './assets/hotel-solid.png',
+iconSize: [20, 20]
+};
+
+var accommodationIcon = L.icon(accommodationIconOptions);
+
+var shoppingIconOptions = {
+iconUrl: './assets/cart-shopping-solid.png',
+iconSize: [20, 20]
+};
+
+var shoppingIcon = L.icon(shoppingIconOptions);
+
+var servicesIconOptions = {
+iconUrl: './assets/building-solid.png',
+iconSize: [20, 20]
+};
+
+var servicesIcon = L.icon(servicesIconOptions);
+
+setupNav();
+setupAutoComplete();
+
+document.getElementById('hide-markers-toggle').addEventListener("change", (e) => {
+    if (e.target.checked) {
+        hideNearbyPlacesMarkers = true;
+
+        nearByMarkers.forEach(function (marker) {
+            nearbyMarkersCluster.removeLayer(marker);
+        });
+    } else {
+        hideNearbyPlacesMarkers = false;
+
+        nearByMarkers.forEach(function (marker) {
+            // marker.addTo(map);
+        nearbyMarkersCluster.addLayer(marker);
+        });
+
+    }
+});
