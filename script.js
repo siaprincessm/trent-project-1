@@ -1,5 +1,15 @@
-let centerpoint = [14.5995, 120.9842]
-let map = L.map('map');
+let nearByFood = [];
+let nearByAccommodation = [];
+let nearByShopping = [];
+let nearByServices = [];
+
+let hideNearbyPlacesMarkers = false;
+let nearByMarkers = [];
+
+let searchResultMarker = {};
+
+let centerpoint = [14.5995, 120.9842];
+let map = L.map('map', { zoomControl: false });
 map.setView(centerpoint, 13);
 
 //create tileLayer
@@ -12,16 +22,9 @@ let tileLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}
     accessToken: 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw'
 })
 
-tileLayer.addTo(map)
+tileLayer.addTo(map);
 
-async function loadGeoJSON() {
-    let response = await axios.get('phCountry.geojson');
-    let phCountry = L.geoJSON(response.data, {
-        onEachFeature: function(feature, layer){
+let nearbyMarkersCluster = L.markerClusterGroup();
 
-        }
-    }
-    async function (){
+map.addLayer(nearbyMarkersCluster);
 
-    }
-}
