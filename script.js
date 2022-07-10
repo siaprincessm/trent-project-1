@@ -1,17 +1,3 @@
-function getRandomLatLng(map) {
-    // get the boundaries of the map
-    let bounds = map.getBounds();
-    let southWest = bounds.getSouthWest();
-    let northEast = bounds.getNorthEast();
-    
-    let lngSpan = northEast.lng - southWest.lng;
-    let latSpan = northEast.lat - southWest.lat;
-    let randomLng = Math.random() * lngSpan + southWest.lng;
-    let randomLat = Math.random() * latSpan + southWest.lat;
-    return [ randomLat, randomLng,];
-}
-
-
 let centerpoint = [14.5995, 120.9842]
 let map = L.map('map');
 map.setView(centerpoint, 13);
@@ -31,38 +17,3 @@ tileLayer.addTo(map)
 let groundZero = L.marker([14.5826, 120.9787]);
 groundZero.addTo(map);
 groundZero.bindPopup(`Rizal Park`)
-
-
-// create cluster markings
-let randomMarker = L.layerGroup();
-for (let i = 0; i < 10; i++) {
-    L.marker(getRandomLatLng(map)).addTo(randomMarker);
-}
-randomMarker.addTo(map);
-
-//random circle group
-let greenRandomCircle = L.layerGroup();
-for (let i=0; i < 15; i++) {
-    L.circle(getRandomLatLng(map),{
-    'radius':250,
-    'color': 'green'
-}).addTo(greenRandomCircle)
-}
-greenRandomCircle.addTo(map);
-
-//random yellow circle
-let yellowRandomCircle = L.layerGroup();
-for (let i=0; i < 15; i++) {
-    L.circle(getRandomLatLng(map),{
-    'radius':400,
-    'color': 'yellow'
-}).addTo(yellowRandomCircle)
-}
-yellowRandomCircle.addTo(map);
-
-//base layers
-let baseLayers = {
-    'markers' : randomMarker,
-    'circle' : greenRandomCircle,
-}
-L.control.layers(baseLayers,{}).addTo(map);
