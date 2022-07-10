@@ -14,6 +14,14 @@ let tileLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}
 
 tileLayer.addTo(map)
 
-let groundZero = L.marker([14.5826, 120.9787]);
-groundZero.addTo(map);
-groundZero.bindPopup(`Rizal Park`)
+async function loadGeoJSON() {
+    let response = await axios.get('phCountry.geojson');
+    let phCountry = L.geoJSON(response.data, {
+        onEachFeature: function(feature, layer){
+
+        }
+    }
+    async function (){
+
+    }
+}
