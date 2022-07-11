@@ -31,7 +31,8 @@ map.addLayer(nearbyMarkersCluster);
 axios.get('assets/regions.0.01.json')
     .then(function(response) {
         response.data.features.forEach(region => {
-            L.geoJSON(region, {fillOpacity: 0.0}).addTo(map);});
+            L.geoJSON(region, {fillOpacity: 0.0}).addTo(map);
+        });
 })
 .catch(function(error) {
     console.log(error);
@@ -93,3 +94,31 @@ document.getElementById('hide-markers-toggle').addEventListener("change", (e) =>
 
     }
 });
+
+function setupNav() {
+    Array.from(document.getElementsByClassName('nav-link')).forEach(function (e) {
+        e.onclick = navClick;
+    });
+}
+
+function navClick() {
+    document.querySelector(".nav-item > .active").classList.remove("active");
+    this.classList.add('active');
+
+
+    if (this.id == 'food-tab') {
+        listNearbyPlacesContainer(nearByFood, foodIcon);
+    }
+
+    if (this.id == 'accommodation-tab') {
+        listNearbyPlacesContainer(nearByAccommodation, accommodationIcon);
+    }
+
+    if (this.id == 'shopping-tab') {
+        listNearbyPlacesContainer(nearByShopping, shoppingIcon);
+    }
+
+    if (this.id == 'services-tab') {
+        listNearbyPlacesContainer(nearByServices, servicesIcon);
+    }
+}
