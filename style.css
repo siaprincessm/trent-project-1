@@ -2,3 +2,6 @@ div#map {
   height: 100vh;
 }
 
+#search-panel {
+  z-index: 999;
+}

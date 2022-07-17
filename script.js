@@ -1,7 +1,4 @@
-let nearByFood = [];
-let nearByAccommodation = [];
-let nearByShopping = [];
-let nearByServices = [];
+let nearByPlaces = [];
 
 let hideNearbyPlacesMarkers = false;
 let nearByMarkers = [];
@@ -33,48 +30,47 @@ axios.get('assets/regions.0.01.json')
         response.data.features.forEach(region => {
             L.geoJSON(region, {fillOpacity: 0.0}).addTo(map);
         });
-})
-.catch(function(error) {
-    console.log(error);
-});
+    })
+    .catch(function(error) {
+        console.log(error);
+    });
 
 document.getElementById('zoom-in').onclick = function() {
-map.setZoom(map.getZoom() + 1);
+    map.setZoom(map.getZoom() + 1);
 };
 
 document.getElementById('zoom-out').onclick = function() {
-map.setZoom(map.getZoom() - 1);
+    map.setZoom(map.getZoom() - 1);
 };
 
-let foodIconOptions = {
-iconUrl: './assets/utensils-solid.png',
-iconSize: [20, 20]
+var foodIconOptions = {
+    iconUrl: './assets/utensils-solid.png',
+    iconSize: [20, 20]
 };
 
-let foodIcon = L.icon(foodIconOptions);
+var foodIcon = L.icon(foodIconOptions);
 
-let accommodationIconOptions = {
-iconUrl: './assets/hotel-solid.png',
-iconSize: [20, 20]
+var accommodationIconOptions = {
+    iconUrl: './assets/hotel-solid.png',
+    iconSize: [20, 20]
 };
 
-let accommodationIcon = L.icon(accommodationIconOptions);
+var accommodationIcon = L.icon(accommodationIconOptions);
 
-let shoppingIconOptions = {
-iconUrl: './assets/cart-shopping-solid.png',
-iconSize: [20, 20]
+var shoppingIconOptions = {
+    iconUrl: './assets/cart-shopping-solid.png',
+    iconSize: [20, 20]
 };
 
-let shoppingIcon = L.icon(shoppingIconOptions);
+var shoppingIcon = L.icon(shoppingIconOptions);
 
-let servicesIconOptions = {
-iconUrl: './assets/building-solid.png',
-iconSize: [20, 20]
+var servicesIconOptions = {
+    iconUrl: './assets/building-solid.png',
+    iconSize: [20, 20]
 };
 
-let servicesIcon = L.icon(servicesIconOptions);
+var servicesIcon = L.icon(servicesIconOptions);
 
-setupNav();
 setupAutoComplete();
 
 document.getElementById('hide-markers-toggle').addEventListener("change", (e) => {
@@ -95,58 +91,30 @@ document.getElementById('hide-markers-toggle').addEventListener("change", (e) =>
     }
 });
 
-function setupNav() {
-    Array.from(document.getElementsByClassName('nav-link')).forEach(function (e) {
-        e.onclick = navClick;
-    });
-}
-
-function navClick() {
-    document.querySelector(".nav-item > .active").classList.remove("active");
-    this.classList.add('active');
-
-
-    if (this.id == 'food-tab') {
-        listNearbyPlacesContainer(nearByFood, foodIcon);
-    }
-
-    if (this.id == 'accommodation-tab') {
-        listNearbyPlacesContainer(nearByAccommodation, accommodationIcon);
-    }
-
-    if (this.id == 'shopping-tab') {
-        listNearbyPlacesContainer(nearByShopping, shoppingIcon);
-    }
-
-    if (this.id == 'services-tab') {
-        listNearbyPlacesContainer(nearByServices, servicesIcon);
-    }
-}
-
 function listNearbyPlacesContainer(places, icon) {
-    let listNearbyPlacesContainer = document.getElementById('nearby-places-container');
+    var nearbyPlacesContainer = document.getElementById('nearby-places-container');
 
     let placeList = '';
 
-    nearByMarkers.forEach(function (marker){
+    nearByMarkers.forEach(function (marker) {
         nearbyMarkersCluster.removeLayer(marker);
     });
 
-    nearByMarkers = []
+    nearByMarkers = [];
 
     if(places.length > 0) {
         nearbyPlacesContainer.innerHTML = '';
 
         places.forEach(function (place) {
     
-            let markerOptions = {
+            var markerOptions = {
                 title: place.name,
                 clickable: true,
                 draggable: false,
                 icon: icon
             };
-
-            let placeMarker = L.marker([place.geocodes.main.latitude, place.geocodes.main.longitude], markerOptions);
+    
+            var placeMarker = L.marker([place.geocodes.main.latitude, place.geocodes.main.longitude], markerOptions);
     
             placeMarker.bindPopup(place.name + '<br/>' + place.distance / 1000 + 'km');
     
@@ -175,3 +143,84 @@ function clickNearByPlace(lat, lng) {
     map.setView([lat, lng], 13);
 }
 
+function setupAutoComplete() {
+    // setup search bar
+    new Autocomplete("search", {
+        selectFirst: false,
+        // The number of characters entered should start searching
+        howManyCharacters: 3,
+
+        onSearch: ({ currentValue }) => {
+            const api = 'https://api.foursquare.com/v3/places/search?query=' + encodeURI(currentValue);
+
+            return axios.get(api, {
+                headers: {
+                    Authorization: "fsq3XWxjy43Yyw+mFjBG60wWVmyPQqhXP8LacGNJHyLE/lU=",
+                    Accept: "application/json"
+                }
+            })
+                .then((response) => {
+                    return response.data.results;
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        onResults: ({ currentValue, matches, template }) => {
+            return matches === 0
+                ? template
+                : matches
+                    .map(function (element) {
+                        return '<li class="loupe"><p><b>' + element.name + '</b>  <span>' + element.location.address + ', ' + element.location.locality + '<span></p></li>';
+                    })
+                    .join("");
+        },
+        onSubmit: ({ object }) => {
+            
+            map.removeLayer(searchResultMarker);
+
+            searchResultMarker = L.marker([object.geocodes.main.latitude, object.geocodes.main.longitude], {
+                title: object.name,
+            });
+
+            searchResultMarker.addTo(map).bindPopup(object.name);
+
+            map.setView([object.geocodes.main.latitude, object.geocodes.main.longitude], 13);
+
+            nearByPlaces = [];
+
+            axios.get('https://api.foursquare.com/v3/places/search?categories=13065,19014,17114,12000&radius=10000', {
+                headers: {
+                    Authorization: "fsq3XWxjy43Yyw+mFjBG60wWVmyPQqhXP8LacGNJHyLE/lU=",
+                    Accept: "application/json"
+                }
+            })
+                .then((response) => {
+                    nearByPlaces = response.data.results;
+                    listNearbyPlacesContainer(nearByPlaces, foodIcon);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        onSelectedItem: ({ index, element, object }) => {
+            console.log("onSelectedItem:", index, element, object);
+        },
+        onReset: () => {
+
+            nearByMarkers.forEach(function (marker) {
+                nearbyMarkersCluster.removeLayer(marker);
+            });
+
+            map.removeLayer(searchResultMarker);
+
+            nearByMarkers = [];
+
+            document.getElementById('nearby-places-container').innerHTML = '<span>No search data</span>';
+
+            nearByPlaces = [];
+        },
+        noResults: ({ currentValue, template }) =>
+            template(`<li>No results found: "${currentValue}"</li>`),
+    });
+}

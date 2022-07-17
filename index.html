@@ -30,7 +30,7 @@
 </head>
 
 <body>
- 
+
     <div id="search-panel" class="position-absolute end-0 col col-md-3">
         <div class="auto-search-wrapper from-group">
             <input type="text" autocomplete="off" id="search" class="form-control" placeholder="search here" />
@@ -38,62 +38,50 @@
 
         <div id="search-data-panel" class="mt-3 bg-white">
             <div class="d-flex justify-content-between m-2">
-        <div>
-            <span>Nearby Places</span>
+                <div>
+                    <span>Nearby Places</span>
+                </div>
+                <div>
+                    <span>
+                        <a id="nearby-data-panel-toggle" data-bs-toggle="collapse" href="#collapse-div" role="button" aria-expanded="false"
+                            aria-controls="collapse-div">
+                            <small>show/hide</small>
+                        </a>
+                    </span>
+                </div>
+
+            </div>
+
+            <div id="collapse-div" class="collapse">
+
+                <div id="nearby-places-container" class="bg-white">
+                    <span>no search data</span>
+                </div>
+
+            </div>
+            <div class="bg-white p-1">
+                <span>Zoom</span>
+                <button class="btn btn-secondary" id="zoom-in">+</button>
+                <button class="btn btn-secondary" id="zoom-out">-</button>
+            </div>
+
+            <div class="bg-white p-1">
+                <label class="switch">
+                    <input id="hide-markers-toggle" type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+
+                <span>
+                    Hide markers for nearby places
+                </span>
+            </div>
         </div>
-        <div>
-            <span>
-                <a id="nearby-data-panel-toggle" data-bs-toggle="collapse" href="#collapse-div" role="button" aria-expanded="false"
-                    aria-controls="collapse-div">
-                    <small>show/hide</small>
-                </a>
-            </span>
-        </div>
+    </div>
+
+    <div id="map">
 
     </div>
 
-    <div id="collapse-div" class="collapse">
-
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a id="food-tab" class="nav-link active" aria-current="page" href="#">Food</a>
-            </li>
-            <li class="nav-item">
-                <a id="accommodation-tab" class="nav-link" href="#">Accommodation</a>
-            </li>
-            <li class="nav-item">
-                <a id="shopping-tab" class="nav-link" href="#">Shopping</a>
-            </li>
-            <li class="nav-item">
-                <a id="services-tab" class="nav-link" href="#">Services</a>
-            </li>
-        </ul>
-
-        <div id="nearby-places-container" class="bg-white">
-            <span>no search data</span>
-        </div>
-
-    </div>
-    <div class="bg-white p-1">
-        <span>Zoom</span>
-        <button class="btn btn-secondary" id="zoom-in">+</button>
-        <button class="btn btn-secondary" id="zoom-out">-</button>
-    </div>
-
-    <div class="bg-white p-1">
-        <label class="switch">
-            <input id="hide-markers-toggle" type="checkbox">
-            <span class="slider round"></span>
-        </label>
-
-        <span>
-            Hide markers for nearby places
-        </span>
-    </div>
-</div>
-</div>
-<div id="map">
-</div>
 
     <!--Leaflet JS-->
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
