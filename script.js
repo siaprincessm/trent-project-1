@@ -46,33 +46,33 @@ document.getElementById('zoom-out').onclick = function() {
 map.setZoom(map.getZoom() - 1);
 };
 
-var foodIconOptions = {
+let foodIconOptions = {
 iconUrl: './assets/utensils-solid.png',
 iconSize: [20, 20]
 };
 
-var foodIcon = L.icon(foodIconOptions);
+let foodIcon = L.icon(foodIconOptions);
 
-var accommodationIconOptions = {
+let accommodationIconOptions = {
 iconUrl: './assets/hotel-solid.png',
 iconSize: [20, 20]
 };
 
-var accommodationIcon = L.icon(accommodationIconOptions);
+let accommodationIcon = L.icon(accommodationIconOptions);
 
-var shoppingIconOptions = {
+let shoppingIconOptions = {
 iconUrl: './assets/cart-shopping-solid.png',
 iconSize: [20, 20]
 };
 
-var shoppingIcon = L.icon(shoppingIconOptions);
+let shoppingIcon = L.icon(shoppingIconOptions);
 
-var servicesIconOptions = {
+let servicesIconOptions = {
 iconUrl: './assets/building-solid.png',
 iconSize: [20, 20]
 };
 
-var servicesIcon = L.icon(servicesIconOptions);
+let servicesIcon = L.icon(servicesIconOptions);
 
 setupNav();
 setupAutoComplete();
@@ -122,3 +122,56 @@ function navClick() {
         listNearbyPlacesContainer(nearByServices, servicesIcon);
     }
 }
+
+function listNearbyPlacesContainer(places, icon) {
+    let listNearbyPlacesContainer = document.getElementById('nearby-places-container');
+
+    let placeList = '';
+
+    nearByMarkers.forEach(function (marker){
+        nearbyMarkersCluster.removeLayer(marker);
+    });
+
+    nearByMarkers = []
+
+    if(places.length > 0) {
+        nearbyPlacesContainer.innerHTML = '';
+
+        places.forEach(function (place) {
+    
+            let markerOptions = {
+                title: place.name,
+                clickable: true,
+                draggable: false,
+                icon: icon
+            };
+
+            let placeMarker = L.marker([place.geocodes.main.latitude, place.geocodes.main.longitude], markerOptions);
+    
+            placeMarker.bindPopup(place.name + '<br/>' + place.distance / 1000 + 'km');
+    
+            nearByMarkers.push(placeMarker);
+    
+            if (hideNearbyPlacesMarkers === false) {
+                // placeMarker.addTo(map);
+
+                nearbyMarkersCluster.addLayer(placeMarker);
+
+            }
+    
+            let placeElement = `<a class="list-group-item list-group-item-action" href="#" onclick="clickNearByPlace(${place.geocodes.main.latitude},${place.geocodes.main.longitude})">
+                    <strong>${place.name}</strong> <span> ${place.distance / 1000} km</span><br/>
+                    <span>${place.location.formatted_address}</span>
+                </a>`;
+    
+            placeList += placeElement;
+        });
+    
+        nearbyPlacesContainer.innerHTML = '<div class="list-group">' + placeList + '</div>';
+    }
+}
+
+function clickNearByPlace(lat, lng) {
+    map.setView([lat, lng], 13);
+}
+
